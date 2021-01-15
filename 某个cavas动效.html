@@ -1,0 +1,68 @@
+<style>
+    *{
+        margin:0;
+        padding:0;
+    }
+</style>
+<canvas id="canvas"></canvas>
+<script>
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+
+    canvas.width = winWidth ;
+    canvas.height = winHeight;
+
+    const ctx = canvas.getContext('2d')
+
+    // 矩形整体宽度
+    const topX = 100;
+    const topY = 200;
+    const rectWidth = winWidth - topX * 2;
+    const rectHeight = winHeight - topY * 2;
+    const rectX = topX;
+    const rectY = topY;
+
+    // 每个圆的属性
+    const radius = 2;
+    const gap =  25;
+
+    const xPointsCout = Math.ceil( rectWidth / gap )
+    const yPointsCount = Math.ceil( rectHeight / gap )
+
+    const points = [];
+    for( let i = 0 ; i < xPointsCout; i++ ){
+        let cols = points[i] = [];
+        for( let j = 0; j < yPointsCount;j++){
+            let x = 0;
+            let y = 0;
+            x = i * gap + rectX;
+            y = j * gap + rectY;
+            cols.push({x,y,radius,angle:0})
+        }
+    }
+
+    // 小球要圆周运动
+    let runRadius = 10;
+    let step = 0.01;
+    let curCanmove = 0;
+   
+    function animate(){
+        function run(){
+            ctx.clearRect(0,0,winWidth,winHeight);
+            points.forEach( (cols,index) => {
+                cols.forEach((circle,curIndex) => {
+                    circle.angle += (step);
+                    circle.runX = runRadius * Math.sin((circle.angle) * Math.PI+index);
+                    circle.runY = runRadius * Math.cos((circle.angle) * Math.PI+index);
+                    ctx.beginPath();
+                    ctx.arc( circle.x+circle.runX,circle.y+circle.runY,radius,0,Math.PI * 2 );
+                    ctx.closePath()
+                    ctx.fill();
+                })
+            })
+        }
+        run();
+        requestAnimationFrame(animate)
+    }
+    animate();
+</script>
